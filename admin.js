@@ -415,7 +415,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// ===== LOGIN (FIX #1) =====
+// ===== LOGIN =====
 function initLogin() {
   document.getElementById("loginForm").addEventListener("submit", (e) => {
     e.preventDefault();
@@ -448,7 +448,6 @@ function initLogin() {
         email: "admin@pawgen.vn",
         role: "admin",
       };
-      // LƯU SESSION ĐÚNG CẤU TRÚC ĐỂ app.js NHẬN DIỆN
       const sessionData = {
         name: adminUser.name,
         email: adminUser.email,
@@ -844,7 +843,7 @@ function renderRejected() {
           <td style="font-size:0.82rem;color:var(--red);max-width:200px">${pet.rejectReason || "—"}</td>
           <td style="font-size:0.78rem;color:var(--mid-gray)">${pet.rejectedTime || "—"}</td>
           <td><button class="btn-approve" style="font-size:0.72rem" onclick="reApprove('${pet.id}')">↩ Duyệt lại</button></td>
-        </tr>`,
+        <tr>`,
           )
           .join("")}
       </tbody></table></div>`
@@ -1024,7 +1023,7 @@ function submitAddPet() {
   navigateTo("approved");
 }
 
-// ===== FIX #2: FOSTERS — chỉnh sửa + xóa =====
+// ===== FOSTERS =====
 function renderFosters() {
   const fosters = getFosters();
   document.getElementById("pageContent").innerHTML = `
@@ -1055,13 +1054,13 @@ function renderFosters() {
             <td><span class="sbadge ${f.status === "active" ? "sbadge-approved" : "sbadge-rejected"}">${f.status === "active" ? "✅ Hoạt động" : "⏸ Ngưng"}</span></td>
             <td><div class="action-btns">
               <button class="btn-edit" onclick="openEditFosterModal(${f.id})">✏️ Sửa</button>
-              <button class="btn-delete" onclick="deleteFoster(${f.id})">🗑</button>
+              <button class="btn-delete" onclick="deleteFoster(${f.id})">🗑 Xóa</button>
             </div></td>
           </tr>`,
             )
             .join("")}
         </tbody>
-      </table></div>
+      <table></div>
     </div>`;
 }
 
@@ -1149,6 +1148,71 @@ function deleteFoster(id) {
   renderFosters();
 }
 
+// ===== VOLUNTEERS =====
+function renderVolunteers() {
+  const volunteers = getVolunteers();
+  document.getElementById("pageContent").innerHTML = `
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">🙋 Tình nguyện viên (${volunteers.length})</span>
+        <button class="btn-submit" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="openAddVolunteerModal()">+ Thêm mới</button>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>Tên</th>
+              <th>Vai trò</th>
+              <th>Khu vực</th>
+              <th>Số điện thoại</th>
+              <th>Nhiệm vụ</th>
+              <th>Trạng thái</th>
+              <th>Ngày tham gia</th>
+              <th>Hành động</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${volunteers
+              .map(
+                (v) => `<tr>
+                  <td>
+                    <div style="font-weight:600">${escapeHtml(v.name)}</div>
+                  </td>
+                  <td>
+                    <span class="sbadge" style="background:#E8F0FF;color:var(--blue);padding:0.25rem 0.6rem">${escapeHtml(v.role)}</span>
+                  </td>
+                  <td style="font-size:0.82rem">${escapeHtml(v.area || "Chưa cập nhật")}</td>
+                  <td style="font-size:0.82rem">${escapeHtml(v.phone || "—")}</td>
+                  <td>
+                    <span style="font-family:var(--font-mono);font-weight:700;background:var(--cream);padding:0.2rem 0.6rem;border-radius:20px">${v.missions || 0}</span>
+                  </td>
+                  <td>
+                    <span class="sbadge ${v.status === "active" ? "sbadge-approved" : "sbadge-rejected"}">
+                      ${v.status === "active" ? "✅ Hoạt động" : "⏸ Tạm ngưng"}
+                    </span>
+                  </td>
+                  <td style="font-size:0.78rem;color:var(--mid-gray)">${v.joined || "—"}</td>
+                  <td>
+                    <div class="action-btns">
+                      <button class="btn-edit" onclick="openEditVolunteerModal(${v.id})">✏️ Sửa</button>
+                      <button class="btn-delete" onclick="deleteVolunteer(${v.id})">🗑 Xóa</button>
+                    </div>
+                  </td>
+                </tr>`,
+              )
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
+
 function openAddVolunteerModal() {
   editingVolunteerId = null;
   document.getElementById("modalContent").innerHTML = volunteerForm({});
@@ -1186,7 +1250,7 @@ function volunteerForm(v) {
   return `<h3 style="font-family:var(--font-display);margin-bottom:1.25rem">${editingVolunteerId ? "✏️ Sửa TNV" : "➕ Thêm TNV"}</h3>
   <form id="volunteerModalForm">
     <div class="modal-info-grid">
-      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Họ tên *</label><input type="text" id="vName" value="${v.name || ""}" required style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
+      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Họ tên *</label><input type="text" id="vName" value="${escapeHtml(v.name || "")}" required style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Số điện thoại</label><input type="tel" id="vPhone" value="${v.phone || ""}" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Vai trò</label><select id="vRole" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body)">${roles.map((r) => `<option ${v.role === r ? "selected" : ""}>${r}</option>`).join("")}</select></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Khu vực hoạt động</label><input type="text" id="vArea" value="${v.area || ""}" placeholder="VD: Q.1, Q.3" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
@@ -1308,7 +1372,7 @@ function renderOrders(filterStatus = "all") {
           ? `<div class="empty-state"><div class="empty-state-icon">📭</div><h3>Không có đơn hàng nào</h3></div>`
           : `
       <div style="overflow-x:auto"><table class="tbl">
-        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th>Thời gian</th><th>Hành động</th><tr></thead>
+        <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Sản phẩm</th><th>Tổng tiền</th><th>Thanh toán</th><th>Trạng thái</th><th>Thời gian</th><th>Hành động</th></tr></thead>
         <tbody>
           ${filtered
             .map((o) => {
@@ -1433,7 +1497,6 @@ function renderMerch() {
     homeware: "🏠 Đồ nhà",
   };
 
-  // Tính số lượng đã bán cho từng sản phẩm
   const soldMap = {};
   orders
     .filter((o) => o.status !== "cancelled")
@@ -1482,7 +1545,7 @@ function renderMerch() {
               <td>${m.badge ? `<span class="sbadge sbadge-approved">${m.badge}</span>` : "—"}</td>
               <td><div class="action-btns">
                 <button class="btn-edit" onclick="openEditMerchModal(${m.id})">✏️ Sửa</button>
-                <button class="btn-delete" onclick="deleteMerch(${m.id})">🗑</button>
+                <button class="btn-delete" onclick="deleteMerch(${m.id})">🗑 Xóa</button>
               </div></td>
             </tr>`;
             })
@@ -1587,10 +1650,12 @@ function initModal() {
     if (e.key === "Escape") closeModal();
   });
 }
+
 function openModal() {
   document.getElementById("detailModal").classList.add("open");
   document.body.style.overflow = "hidden";
 }
+
 function closeModal() {
   document.getElementById("detailModal").classList.remove("open");
   document.body.style.overflow = "";
