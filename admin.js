@@ -1149,40 +1149,6 @@ function deleteFoster(id) {
   renderFosters();
 }
 
-// ===== FIX #2: VOLUNTEERS — chỉnh sửa + xóa =====
-// ===== VOLUNTEERS MANAGEMENT =====
-function renderVolunteers() {
-  const volunteers = getVolunteers();
-  document.getElementById("pageContent").innerHTML = `
-    <div class="table-card">
-      <div class="table-header">
-        <span class="table-title">🙋 Tình nguyện viên (${volunteers.length})</span>
-        <button class="btn-submit" style="padding:0.4rem 1rem;font-size:0.8rem" onclick="openAddVolunteerModal()">+ Thêm mới</button>
-      </div>
-      <div style="overflow-x:auto"><table class="tbl">
-        <thead><tr><th>Tên</th><th>Vai trò</th><th>Khu vực</th><th>Nhiệm vụ</th><th>Trạng thái</th><th>Tham gia</th><th>Hành động</th></tr></thead>
-        <tbody>
-          ${volunteers
-            .map(
-              (v) => `<tr>
-            <td><div class="pet-cell-name">${v.name}</div><div class="pet-cell-sub">${v.phone || ""}</div></td>
-            <td><span class="sbadge" style="background:#E8F0FF;color:var(--blue)">${v.role}</span></td>
-            <td style="font-size:0.82rem">${v.area || ""}</td>
-            <td><span style="font-family:var(--font-mono);font-weight:700">${v.missions || 0}</span></td>
-            <td><span class="sbadge ${v.status === "active" ? "sbadge-approved" : "sbadge-rejected"}">${v.status === "active" ? "✅ Hoạt động" : "⏸ Ngưng"}</span></td>
-            <td style="font-size:0.78rem;color:var(--mid-gray)">${v.joined || ""}</td>
-            <td><div class="action-btns">
-              <button class="btn-edit" onclick="openEditVolunteerModal(${v.id})">✏️ Sửa</button>
-              <button class="btn-delete" onclick="deleteVolunteer(${v.id})">🗑</button>
-            </div></td>
-          </tr>`,
-            )
-            .join("")}
-        </tbody>
-      </table></div>
-    </div>`;
-}
-
 function openAddVolunteerModal() {
   editingVolunteerId = null;
   document.getElementById("modalContent").innerHTML = volunteerForm({});
@@ -1221,9 +1187,9 @@ function volunteerForm(v) {
   <form id="volunteerModalForm">
     <div class="modal-info-grid">
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Họ tên *</label><input type="text" id="vName" value="${v.name || ""}" required style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
-      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">SĐT</label><input type="tel" id="vPhone" value="${v.phone || ""}" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
+      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Số điện thoại</label><input type="tel" id="vPhone" value="${v.phone || ""}" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Vai trò</label><select id="vRole" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body)">${roles.map((r) => `<option ${v.role === r ? "selected" : ""}>${r}</option>`).join("")}</select></div>
-      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Khu vực</label><input type="text" id="vArea" value="${v.area || ""}" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
+      <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Khu vực hoạt động</label><input type="text" id="vArea" value="${v.area || ""}" placeholder="VD: Q.1, Q.3" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Số nhiệm vụ</label><input type="number" id="vMissions" value="${v.missions || 0}" min="0" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body);outline:none"/></div>
       <div class="modal-info-item" style="background:none;padding:0"><label style="font-size:0.8rem;font-weight:600;display:block;margin-bottom:0.3rem">Trạng thái</label><select id="vStatus" style="width:100%;padding:0.6rem;border:2px solid var(--light-gray);border-radius:6px;font-family:var(--font-body)"><option value="active" ${v.status === "active" ? "selected" : ""}>✅ Hoạt động</option><option value="inactive" ${v.status === "inactive" ? "selected" : ""}>⏸ Tạm ngưng</option></select></div>
     </div>
